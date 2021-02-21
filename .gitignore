@@ -6,7 +6,7 @@
 *.dylib
 
 # This project binary
-gotelemeido
+./gotelemeido
 
 # Test binary, built with `go test -c`
 *.test
