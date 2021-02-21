@@ -50,6 +50,7 @@ func TestReverse(t *testing.T) {
         {"abc", "cba"},
         {"Русское Поле Экспериментов", "вотнемирепскЭ елоП еокссуР"},
         {"Doença", "açneoD"},
+        {"a", "a"},
     }
     for _, test := range tableTests {
         if got := Reverse(test.input); got != test.want {
