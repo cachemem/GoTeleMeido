@@ -32,7 +32,25 @@ func main() {
 
 	updates, err := botTransport.GetUpdatesChan(u)
 
-	bot := NewBot(nil, 0)
+	// Getting ownerId from DB
+	var ownerId int64
+	rows, err := db.Query("SELECT id FROM users WHERE is_owner = $1 LIMIT 1", true)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&ownerId)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	err = rows.Err()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	bot := NewBot(nil, ownerId)
 	for update := range updates {
 		if update.Message == nil { // ignore any non-Message Updates
 			continue
