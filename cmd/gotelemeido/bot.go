@@ -8,18 +8,22 @@ import (
 const helpText = "Use /help to see available commands."
 
 type AnswerBot struct {
-	r reverse.Reverser
+	r       reverse.Reverser
+	ownerId int64
 }
 
-func NewBot(reverser reverse.Reverser) *AnswerBot {
+func NewBot(reverser reverse.Reverser, ownerId int64) *AnswerBot {
 	if reverser == nil {
-		return &AnswerBot{r: reverse.R{}}
+		return &AnswerBot{r: reverse.R{}, ownerId: ownerId}
 	}
-	return &AnswerBot{r: reverser}
+	return &AnswerBot{r: reverser, ownerId: ownerId}
 }
 
 // commands itself
-func (ab *AnswerBot) greetings() string {
+func (ab *AnswerBot) greetings(userId int64) string {
+	if userId == ab.ownerId {
+		return "Welcome back, master!"
+	}
 	return "Hai~ " + helpText
 }
 
@@ -66,7 +70,7 @@ func (ab *AnswerBot) reverse(s *string) string {
 }
 
 // Main method
-func (ab *AnswerBot) ProcessCommand(command string, cmdArgs *string) string {
+func (ab *AnswerBot) ProcessCommand(command string, cmdArgs *string, userId int64) string {
 	switch command {
 	case "help":
 		return ab.help()
@@ -75,7 +79,9 @@ func (ab *AnswerBot) ProcessCommand(command string, cmdArgs *string) string {
 	case "8ball":
 		return ab.eightBall()
 	case "start":
-		return ab.greetings()
+		return ab.greetings(userId)
+	case "hello":
+		return ab.greetings(userId)
 	default:
 		return ab.unknowCommand()
 	}

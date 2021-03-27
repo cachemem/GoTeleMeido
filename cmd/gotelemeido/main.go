@@ -10,10 +10,11 @@ import (
 
 func main() {
 	botToken := os.Getenv("TOKEN")
-	db, err := sql.Open("postgres", "postgres://postgres:@localhost/meidobot?port=5432&sslmode=disable")
+	dbUrl := os.Getenv("DB_URL")
+
+	db, err := sql.Open("postgres", dbUrl)
 	if err != nil {
-		// This will not be a connection error, but a DSN parse error or
-		// another initialization error.
+		// This will not be a connection error, but a DSN parse error or another initialization error.
 		log.Fatal(err)
 	}
 	log.Printf("Db ping is: %s", db.Ping())
@@ -31,7 +32,7 @@ func main() {
 
 	updates, err := botTransport.GetUpdatesChan(u)
 
-	bot := NewBot(nil)
+	bot := NewBot(nil, 0)
 	for update := range updates {
 		if update.Message == nil { // ignore any non-Message Updates
 			continue
@@ -43,9 +44,9 @@ func main() {
 		if update.Message.IsCommand() {
 			cmd := update.Message.Command()
 			cmdArgs := update.Message.CommandArguments()
-			msg.Text = bot.ProcessCommand(cmd, &cmdArgs)
+			msg.Text = bot.ProcessCommand(cmd, &cmdArgs, int64(update.Message.From.ID))
 		} else {
-			msg.Text = bot.ProcessCommand("", nil)
+			msg.Text = bot.ProcessCommand("", nil, int64(update.Message.From.ID))
 		}
 
 		botTransport.Send(msg)
