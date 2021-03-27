@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/cachemem/GoTeleMeido/internal/repository"
 	"github.com/cachemem/GoTeleMeido/internal/reverse"
 	"math/rand"
 )
@@ -12,7 +13,8 @@ type AnswerBot struct {
 	ownerId int64
 }
 
-func NewBot(reverser reverse.Reverser, ownerId int64) *AnswerBot {
+func NewBot(reverser reverse.Reverser, repo repository.Repository) *AnswerBot {
+	ownerId := repo.GetOwner()
 	if reverser == nil {
 		return &AnswerBot{r: reverse.R{}, ownerId: ownerId}
 	}
