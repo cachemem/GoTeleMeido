@@ -15,6 +15,8 @@ type ReverseTest struct {
 	rv string
 }
 
+var testR R = R{}
+
 func (r *ReverseTest) Generate(rand *rand.Rand, size int) reflect.Value {
 	value := make([]rune, wordSize)
 	reversedValue := make([]rune, wordSize)
@@ -30,14 +32,14 @@ func (r *ReverseTest) Generate(rand *rand.Rand, size int) reflect.Value {
 
 func TestReverse(t *testing.T) {
 	f := func(test string) bool {
-		first := Reverse(test)
-		return Reverse(first) == test
+		first := testR.Reverse(test)
+		return testR.Reverse(first) == test
 	}
 	if err := quick.Check(f, &quick.Config{MaxCount: 100000}); err != nil {
 		t.Error(err)
 	}
 	g := func(test *ReverseTest) bool {
-		return Reverse(test.v) == test.rv
+		return testR.Reverse(test.v) == test.rv
 	}
 	if err := quick.Check(g, &quick.Config{MaxCount: 100}); err != nil {
 		t.Error(err)
@@ -53,7 +55,7 @@ func TestReverse(t *testing.T) {
 		{"a", "a"},
 	}
 	for _, test := range tableTests {
-		if got := Reverse(test.input); got != test.want {
+		if got := testR.Reverse(test.input); got != test.want {
 			t.Errorf("Reverse incorrectly reversed %q, got %q", test.input, got)
 		}
 	}
